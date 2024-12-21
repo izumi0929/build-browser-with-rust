@@ -7,11 +7,15 @@ impl HttpClient {
 }
 
 extern crate alloc;
+use crate::http::alloc::string::ToString;
+use alloc::format;
 use alloc::string::String;
-use sava_core::error::Error;
-use sava_core::http::HttpResponse;
-use noli::net::SocketAddr;
 use alloc::vec::Vec;
+use noli::net::lookup_host;
+use noli::net::SocketAddr;
+use noli::net::TcpStream;
+use saba_core::error::Error;
+use saba_core::http::HttpResponse;
 
 impl HttpClient {
     pub fn get(&self, host: String, port: u16, path: String) -> Result<HttpResponse, Error> {
@@ -32,11 +36,10 @@ impl HttpClient {
 
         let mut stream = match TcpStream::connect(socket_addr) {
             Ok(stream) => stream,
-            Err(e) => {
-                return Err(Error::Network(format!(
-                    "Failed to connect to TCP stream".to_string(),
-                    e
-                )))
+            Err(_) => {
+                return Err(Error::Network(
+                    "Failed to connect to TCP stream".to_string()
+                ))
             }
         };
 
@@ -51,12 +54,12 @@ impl HttpClient {
         request.push_str("Connection: close\n");
         request.push_str("\n");
 
-        let _bytes_written =  match stream.write(request.as_bytes()) {
+        let _bytes_written = match stream.write(request.as_bytes()) {
             Ok(bytes_written) => bytes_written,
             Err(_) => {
-                return Err(Error::Network(format!(
-                    "Failed to send a request to TCP stream".to_string(),
-                )))
+                return Err(Error::Network(
+                    "Failed to send a request to TCP stream".to_string()
+                ))
             }
         };
 
@@ -66,9 +69,9 @@ impl HttpClient {
             let bytes_read = match stream.read(&mut buf) {
                 Ok(bytes) => bytes,
                 Err(_) => {
-                    return Err(Error::Network(format!(
-                        "Failed to receive a request from TCP stream".to_string(),
-                    )))
+                    return Err(Error::Network(
+                        "Failed to receive a request from TCP stream".to_string()
+                    ))
                 }
             };
             if bytes_read == 0 {
@@ -79,8 +82,7 @@ impl HttpClient {
 
         match core::str::from_utf8(&received) {
             Ok(response) => HttpResponse::new(response.to_string()),
-            Err(_) => Err(Error::Network(format!("Invalid received response: {}", e))),
+            Err(e) => Err(Error::Network(format!("Invalid received response: {}", e))),
         }
-
     }
 }
