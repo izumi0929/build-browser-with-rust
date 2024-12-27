@@ -41,5 +41,8 @@ if [ ! -f $MAKEFILE_PATH ]; then
   wget https://raw.githubusercontent.com/hikalium/wasabi/for_saba/external_app_template/Makefile
 fi
 
+# QEMUの起動のために必要だった
+export DISPLAY=:1 
+
 make build
 $OS_PATH/scripts/run_with_app.sh ./target/x86_64-unknown-none/release/$APP_NAME
