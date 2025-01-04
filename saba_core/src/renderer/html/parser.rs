@@ -333,6 +333,11 @@ pub fn construct_tree(&mut self) -> Rc<RefCell<Window>> {
                             token = self.t.next();
                             continue;
                         }
+                        "h1" | "h2" => {
+                            self.insert_element(tag, attributes.to_vec());
+                            token = self.t.next();
+                            continue;
+                        }
                         _ => {
                             token = self.t.next();
                         }
@@ -359,6 +364,12 @@ pub fn construct_tree(&mut self) -> Rc<RefCell<Window>> {
                                 continue;
                             }
                             "p" => {
+                                let element_kind = ElementKind::from_str(tag).expect("failed to convert to string to ElementKind");
+                                token = self.t.next();
+                                self.pop_until(element_kind);
+                                continue;
+                            }
+                            "h1" | "h2" => {
                                 let element_kind = ElementKind::from_str(tag).expect("failed to convert to string to ElementKind");
                                 token = self.t.next();
                                 self.pop_until(element_kind);
