@@ -338,6 +338,11 @@ pub fn construct_tree(&mut self) -> Rc<RefCell<Window>> {
                             token = self.t.next();
                             continue;
                         }
+                        "a" => {
+                            self.insert_element(tag, attributes.to_vec());
+                            token = self.t.next();
+                            continue;
+                        }
                         _ => {
                             token = self.t.next();
                         }
@@ -375,15 +380,25 @@ pub fn construct_tree(&mut self) -> Rc<RefCell<Window>> {
                                 self.pop_until(element_kind);
                                 continue;
                             }
+                            "a" => {
+                                let element_kind = ElementKind::from_str(tag).expect("failed to convert to string to ElementKind");
+                                token = self.t.next();
+                                self.pop_until(element_kind);
+                                continue;
+                            }
                             _ => {
                                 token = self.t.next();
                             }
                         }
                     }
+                    Some(HtmlToken::Char(c)) => {
+                        self.insert_char(c);
+                        token = self.t.next();
+                        continue;
+                    }
                     Some(HtmlToken::Eof) | None => {
                         return self.window.clone();
                     }
-                    _ => {}
                 }
             }
             InsertionMode::Text => {
