@@ -10,8 +10,9 @@ use alloc::rc::Rc;
 use alloc::vec::Vec;
 use core::cell::RefCell;
 use alloc::string::String;
+use core::str::FromStr;
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct HtmlParser {
     window: Rc<RefCell<Window>>,
     mode: InsertionMode,
@@ -471,6 +472,7 @@ pub fn construct_tree(&mut self) -> Rc<RefCell<Window>> {
 }
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum InsertionMode {
     Initial,
     BeforeHtml,
@@ -481,4 +483,21 @@ pub enum InsertionMode {
     Text,
     AfterBody,
     AfterAfterBody,
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::alloc::string::ToString;
+
+    #[test]
+    fn test_empty() {
+        let html = "".to_string();
+        let t = HtmlTokenizer::new(html);
+        let window = HtmlParser::new(t).construct_tree();
+        let expected = Rc::new(RefCell::new(Node::new(NodeKind::Document)));
+
+        assert_eq!(expected, window.borrow().document());
+    }
 }

@@ -191,3 +191,9 @@ impl FromStr for ElementKind {
         }
     }
 }
+
+impl PartialEq for Node {
+    fn eq(&self, other: &Self) -> bool {
+        self.kind == other.kind
+    }
+}
