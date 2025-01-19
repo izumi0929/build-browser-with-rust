@@ -522,7 +522,7 @@ pub enum HtmlToken {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{alloc::string::ToString, renderer::html::attribute};
+    use crate::alloc::string::ToString;
     use alloc::vec;
 
     #[test]

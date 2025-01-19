@@ -513,7 +513,7 @@ mod tests {
             Rc::new(RefCell::new(Node::new(NodeKind::Document))),
             document
         );
-        let html = document.borrow().first_child().expect("failed to get a first child");
+        let html = document.borrow().first_child().expect("failed to get a first child of document");
         assert_eq!(
             Rc::new(RefCell::new(Node::new(NodeKind::Element(Element::new(
                 "html",
@@ -522,7 +522,7 @@ mod tests {
             html
         );
 
-        let head = html.borrow().first_child().expect("failed to get a first child");
+        let head = html.borrow().first_child().expect("failed to get a first child of html");
         assert_eq!(
             Rc::new(RefCell::new(Node::new(NodeKind::Element(Element::new(
                 "head",
@@ -531,7 +531,7 @@ mod tests {
             head
         );
         
-        let body = html.borrow().next_sibling().expect("failed to get a last child");
+        let body = head.borrow().next_sibling().expect("failed to get a next sibling of head");
         assert_eq!(
             Rc::new(RefCell::new(Node::new(NodeKind::Element(Element::new(
                 "body",
